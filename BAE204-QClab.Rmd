@@ -1,7 +1,10 @@
 ---
-output: html_document
 bibliography: FB-uncertainties.bibtex
-link-citations: true
+link-citations: yes
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -59,8 +62,10 @@ Q<-data$Q   #Defines Q as the flow value (m3/s)
 N=nrow(data)   #Sets N to the value equal to the number of total rows in the table
 
 # definition of the x and y axes limits
-startdate<-D[1]
-enddate<-D[N]
+startdate<-as.POSIXct("1997-10-23")
+enddate<-as.POSIXct("1997-10-27")
+#startdate<-D[1]
+#enddate<-D[N]
 xlim = as.POSIXct(c(startdate,enddate))  # this renders the first and last date understandable for plotting purposes
 ylimQ = c(0,max(Q))           # ylim for flow
     
@@ -77,7 +82,8 @@ par(mar=c(4.5,4.5,4,4.5))     # defines the sizes, in number of lines, for the m
     # we are taking all the default addition of axis tick marks and numbers out by using xaxt and yaxt = "n"
     # and setting the axis labels at nothing using xlab = "" and ylab = ""
     abline(h=0)
-    axis.POSIXct(1, at=seq(startdate, enddate, by="month"), format="%m/%d",cex.axis=ScaleF)
+    abline(v=seq(startdate, enddate, by="week"),col=("grey"))
+    axis.POSIXct(1, at=seq(startdate, enddate, by="week"), format="%m/%d %H",cex.axis=ScaleF)
     # this tells R that we want the X axis ticks and values to be displayed as dates, be added on a monthly basis,
     # using the month/day format
     axis(2,cex.axis=ScaleF)
@@ -172,9 +178,40 @@ Each trapeze is the average of the orange and purple rectangles!! So, one can ob
 c(0,(cumsum(TS[-1])+cumsum(head(TS,-1)))/2)
 ```
 
+```{r QCumulQ, echo=TRUE, fig.height=10}
+par(mfrow = c(3,2));par(mar=c(4.5,5,0.5,0.5))
+xlim = as.POSIXct(c(startdate,enddate))    
+    n=c(2500,4500,N)
+for (i in 1:3){
+  plot(0,0,col="blue",type="l",cex=0.1,yaxt="n",     
+         lty=ltyp[1],xaxt="n",xlab="",ylab="",xlim=xlim,ylim=ylimQ)
+    abline(h=0)
+    axis.POSIXct(1, at=seq(startdate, enddate, by="month"), format="%m/%d",cex.axis=ScaleF)
+    axis(2,cex.axis=ScaleF)
+    polygon(c(D[1:n[i]],D[n[i]:1]),c(Q[1:n[i]],rep(0,n[i])),col="grey")
+    par(new=TRUE)
+    plot(D,Q,col="blue",type="l",cex=0.1,yaxt="n",     
+         lty=ltyp[1],xaxt="n",xlab="",ylab="",xlim=xlim,ylim=ylimQ)
+    mtext("Dates in 1997-1998",side=1,line=3,cex=ScaleF) # add in the margin the defined labels and title
+    mtext(y1lab,side=2,line=3,cex=ScaleF)
+        
+cumQ=c(0,(cumsum(Q[-1])+cumsum(head(Q,-1)))/2)*600/WSarea/100
+plot(D[1:n[i]],cumQ[1:n[i]],col="red",type="l",cex=0.1,yaxt="n",     
+         lty=ltyp[1],xaxt="n",xlab="",ylab="",xlim=xlim,ylim=c(0,cumQ[N]))
+    abline(h=0)
+    abline(h=seq(0,1000,by=50),lty=2,col="lightgrey")
+    axis.POSIXct(1, at=seq(startdate, enddate, by="month"), format="%m/%d",cex.axis=ScaleF)
+    axis(2,cex.axis=ScaleF)
+    par(new=TRUE)
+    mtext("Dates in 1997-1998",side=1,line=3,cex=ScaleF) # add in the margin the defined labels and title
+    mtext("Cumulative Flow volume (mm)",side=2,line=3,cex=ScaleF)
+}
+    
+```
+
 #### Exercise 2
 
-Calculate the cumulative volume in mm at the end of the year in the Maudouve at Saint-Donan.
+Calculate the cumulative volume in mm at the end of the hydrological year in the Maudouve River at Saint-Donan.
 
 
 ## Evaluating the importance of rare high flow events: flow duration curves
@@ -190,23 +227,54 @@ QSort=sort(Q,decreasing = TRUE)   #Sorts instantaneous flow rates in descending 
 ```
 <br/><br/>
 
+```{r eval =TRUE, echo = TRUE}
+cumQSort<-c(0,(cumsum(QSort[-1])+cumsum(head(QSort,-1)))/2)*600/WSarea/100
+cumQSortPerc<-cumQSort/tail(cumQSort,1)*100
+```
+
+
 The blue hydrograph from above now becomes:
 <br/><br/>
 
 ``` {r eval =TRUE, echo = TRUE}
 par(mar=c(4.5,4.5,1,1)) 
-plot(QSort,col="blue",type="l",cex=0.1,yaxt="n",     
+plot(1:length(QSort),QSort,col="blue",type="l",cex=0.1,yaxt="n",     
          lty=ltyp[1],xaxt="n",xlab="",ylab="",ylim=ylimQ)
 abline(h=0)    
 axis(2,cex.axis=ScaleF)   
 mtext(y1lab,side=2,line=3,cex=ScaleF)
 mtext("Cumulative number of flow values",side=1,line=3,cex=ScaleF)
 legend("topright",c("Sorted Flow"),lty = c(1), col = c("blue"))
-
 ```
 <br/><br/><br/>
 
 The next thing to do is to integrate under the sorted curves to obtain the cumulative flow as a function for each represented flow value. 
+
+```{r QCumulQSort, echo=TRUE, fig.height=10}
+par(mfrow = c(3,2));par(mar=c(4.5,5,0.5,0.5))
+xlim = as.POSIXct(c(startdate,enddate))    
+    n=c(2500,4500,N)
+for (i in 1:3){
+  plot(0,0,col="blue",type="l",cex=0.1,yaxt="n",     
+         lty=ltyp[1],xaxt="n",xlab="",ylab="",xlim=c(1,length(Q)),ylim=ylimQ)
+    abline(h=0)
+    axis(2,cex.axis=ScaleF)
+    polygon(c(1:n[i],n[i]:1),c(QSort[1:n[i]],rep(0,n[i])),col="grey")
+    par(new=TRUE)
+    plot(1:length(QSort),QSort,col="blue",type="l",cex=0.1,yaxt="n",     
+         lty=ltyp[1],xaxt="n",xlab="",ylab="",xlim=c(1,length(Q)),ylim=ylimQ)
+    mtext(y1lab,side=2,line=3,cex=ScaleF)
+        
+plot(1:n[i],cumQSort[1:n[i]],col="red",type="l",cex=0.1,yaxt="n",     
+         lty=ltyp[1],xaxt="n",xlab="",ylab="",xlim=c(1,length(Q)),ylim=c(0,cumQ[N]))
+    abline(h=0)
+    abline(h=seq(0,1000,by=50),lty=2,col="lightgrey")
+    axis(2,cex.axis=ScaleF)
+    par(new=TRUE)
+    mtext("Cumulative Flow volume (mm)",side=2,line=3,cex=ScaleF)
+}
+    
+```
 
 ### Exercise 3
 
@@ -216,9 +284,9 @@ Plot the cumulative sorted flow volume, expressed in percentage of the total
 
 So now the cumulative flow volume curve corresponding to the highest flow rates as a function of the cumulative number of flow values looks like this:
 
-```{r eval =FALSE, echo = FALSE}
+```{r eval =TRUE, echo = TRUE}
 par(mar=c(4.5,5.5,1,1)) 
-plot(cumQSort,col="blue",type="l",cex=0.1,yaxt="n",     
+plot(cumQSortPerc,col="blue",type="l",cex=0.1,yaxt="n",     
          lty=ltyp[1],xaxt="n",xlab="",ylab="", ylim=c(0,100))
 abline(h=0)    
 axis(2,cex.axis=ScaleF)
@@ -236,7 +304,7 @@ In more details, the cumulative discharge calculated at each instantaneous flow 
 The flashiness of a watershed refers to how rapidly flow is altered as a result of storm events/varying conditions.  More frequent spikes in flow in response to precipitation events, in which flow increases and decreases more greatly and rapidly, are typically indicative of watersheds with predominant portions of streamflow being influenced by surface runoff, a quicker responding contributor of water to streamflow.  
 <br/><br/><br/>
 
-```{r eval =FALSE, echo = TRUE}
+```{r eval =TRUE, echo = TRUE}
 Wk=quantile(cumQSort,probs=seq(0.01,1,0.01))/tail(cumQSort,1) #Calculates and assigns Wk% values to a probability occurring in 1-100% of the total time
 ```
 <br/><br/><br/>
@@ -245,47 +313,49 @@ Wk=quantile(cumQSort,probs=seq(0.01,1,0.01))/tail(cumQSort,1) #Calculates and as
 
 ## Flow and Load duration curves
 
-This method allows us to see the percentage of the total discharge that occurs in a fraction of the total time with the lowest probabilities of occurrence corresponding with the highest flow rates associated with event flow.  Therefore, if one watershed produces a majority of the total discharge in 50% of the time versus a watershed that produces a majority of the total discharge in 80% of the time, that watershed may be considered relatively flashier because a greater portion of the total discharge occurs in association with higher flow rates.  In other words, streamflow would be considered more reactive to event water because the event hydrograph rises and recedes more quickly than the other watershed.  This quick rise and recession allows for most flow to occur in a smaller percentage of the time versus the watershed that has a much wider event hydrograph spanning across a greater range of instantaneous flow values over a greater period of time. Visually, this method can provide a relative comparison of the flashiness of multiple watersheds.  In the example above, the shape of the curve in the first watershed would have a greater slope towards the lower percentages/probabilities of occurrence and the curve for the second watershed would be somewhat flatter. 
+This method allows to see the percentage of the total discharge that occurs in a fraction of the total time with the lowest probabilities of occurrence corresponding with the highest flow rates associated with event flow.  Therefore, if one watershed produces a majority of the total discharge in 50% of the time versus a watershed that produces a majority of the total discharge in 80% of the time, that watershed may be considered relatively flashier because a greater portion of the total discharge occurs in association with higher flow rates.  In other words, streamflow would be considered more reactive to event water because the event hydrograph rises and recedes more quickly than the other watershed.  This quick rise and recession allows for most flow to occur in a smaller percentage of the time versus the watershed that has a much wider event hydrograph spanning across a greater range of instantaneous flow values over a greater period of time. Visually, this method can provide a relative comparison of the flashiness of multiple watersheds.  In the example above, the shape of the curve in the first watershed would have a greater slope towards the lower percentages/probabilities of occurrence and the curve for the second watershed would be somewhat flatter. 
 <br/><br/><br/>
 
-```{r eval =FALSE, echo = TRUE}
+```{r eval =TRUE, echo = TRUE}
     xlim=c(0,100);ylim=c(0,100);
     plot(1:100,Wk*100,xlab="Prob of Occurrence %",ylab="Mk% & Wk%",xlim=xlim,ylim=ylim,pch=21,col="black",bg="blue")
     par(new=TRUE)
-    plot(1:100,Mk*100,xlab="Prob of Occurrence %",ylab="Mk% & Wk%",xlim=xlim,ylim=ylim,pch=22,col="black",bg=ColElmt)
-    par(new=TRUE)
+  #  plot(1:100,Mk*100,xlab="Prob of Occurrence %",ylab="Mk% & Wk%",xlim=xlim,ylim=ylim,pch=22,col="black",bg=ColElmt)
+  #  par(new=TRUE)
     abline(1,1,xlab="Prob of Occurrence %",ylab="Mk% & Wk",col="black",lty="dashed",xlim=xlim,ylim=ylim)
     par(new=TRUE)
     legend("bottomright",c("Cumul Q","Cumul NO3 load"),
-          pch=c(19,19),
-          col=c("blue",ColElmt),
+          pch=c(19),
+          col=c("blue"),
           bg="white")
     title(main="Nitrate Load and flow duration curves") # the \n in the text allows for line break in the title
     
     #Code for plotting the double cumulative plot using the normal distribution probabilities to zoom in on the lower tails
     v<-c(1,2,3,5,10,25,50,75,90,95,97,98,99,100) #v is a set of user defined values of percentages of the total time to be used for calculating and plotting specific corresponding Wk% and Mk% values
     x<-v/100  #Sets x as values of v in percentages
-		y<-Mk[v]  #Sets y as the set of Mk% values corresponding with percentages of the total time defined by values in x
+#		y<-Mk[v]  #Sets y as the set of Mk% values corresponding with percentages of the total time defined by values in x
     xx<-qnorm(x) #qnorm takes a given probability (x values in this case) and returns the corresponding cumulative distribution value (Z-score) based on a normal distribution curve   
-    yy<-qnorm(y) #Here, qnorm is taking the percentages of the load that occur associated with percentages of the total time defined by values in x and calculating associated Z-scores according to a normal distribution curve
+#    yy<-qnorm(y) #Here, qnorm is taking the percentages of the load that occur associated with percentages of the total time defined by values in x and calculating associated Z-scores according to a normal distribution curve
     yV<-Wk[v] #Sets yV as the set of Wk% values corresponding with percentages of the total time defined by values in x
     yyV<-qnorm(yV) #qnorm takes percentages of the flow occurring associated with percentages of the total time defined by x values and assigns Z-score values to each probability based on the normal distribution curve 
-    yy<-cbind(yy,yyV) #Binds both sets of Z-score values corresponding with Mk% (yy) and Wk% (yV)
+#    yy<-cbind(yy,yyV) #Binds both sets of Z-score values corresponding with Mk% (yy) and Wk% (yV)
     xx<-cbind(xx,xx) #Binds both sets of Z-scores correspdonding with defined percentages of the total time (They are the same, this is for plotting purposes)
-    color<-c(ColElmt,"blue") #Defines the plot colors for yy and yV
-    
-    for (i in 1:2){
-    plot(xx[,i],yy[,i],xlab="Probability of Occurrence (%)",ylab="Mk% & Wk%",type="o",xaxt="n",yaxt="n",xlim=c(-2.5,2.5),ylim=c(-2.5,2.5),pch=i,col=color[i])#Plots yy and yV values as a function of xx values
+#    color<-c(ColElmt,"blue") #Defines the plot colors for yy and yV
+    color<-c("blue") #Defines the plot colors for yy and yV
+        
+
+    plot(xx[,1],yyV,xlab="Probability of Occurrence (%)",ylab="Wk%",
+         type="o",xaxt="n",yaxt="n",xlim=c(-2.5,2.5),ylim=c(-2.5,2.5),pch=19,col=color) #Plots yy and yV values as a function of xx values
     par(new=TRUE)
-    } 
+
     
     axis(1,at=xx[,1],labels=x*100)
     axis(2,at=xx[,1],labels=x*100)
-    title(main="Double cumulative probability plot for nitrate load \nand for flow volume") # the \n in the text allows for line break in the title
+    title(main="Double cumulative probability plot for flow volume") # the \n in the text allows for line break in the title
     abline(h=xx,lty=3,col="grey") #Plots gridlines
     abline(v=xx,lty=3,col="grey")
-    legend("bottomright",c("Cumul NO3 load","Cumul Q"),
-          pch=1:2,
+    legend("bottomright",c("Cumul Q"),
+          pch=1,
           col=color,
           bg="white")
 
