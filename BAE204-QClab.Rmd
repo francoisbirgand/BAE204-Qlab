@@ -62,10 +62,9 @@ Q<-data$Q   #Defines Q as the flow value (m3/s)
 N=nrow(data)   #Sets N to the value equal to the number of total rows in the table
 
 # definition of the x and y axes limits
-startdate<-as.POSIXct("1997-10-23")
-enddate<-as.POSIXct("1997-10-27")
-#startdate<-D[1]
-#enddate<-D[N]
+
+startdate<-D[1]
+enddate<-D[N]
 xlim = as.POSIXct(c(startdate,enddate))  # this renders the first and last date understandable for plotting purposes
 ylimQ = c(0,max(Q))           # ylim for flow
     
