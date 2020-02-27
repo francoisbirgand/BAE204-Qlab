@@ -5,6 +5,6 @@ ipak <- function(pkg){
   sapply(pkg, library, character.only = TRUE)
 }
 # usage
-packages <- c("knitr", "captioner", "stringr", "devtools", "bookdown","kableExtra", "rmarkdown","blogdown","pander")
+packages <- c("knitr", "captioner", "stringr", "devtools", "bookdown","kableExtra", "rmarkdown","blogdown","pander","shape")
 ipak(packages)
 

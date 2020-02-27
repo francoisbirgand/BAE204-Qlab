@@ -1,0 +1,67 @@
+---
+title: "Rmarkdown-starter"
+author: "François Birgand"
+date: "2/27/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+The beauty of Markdown is to embed R codes, within the text, such that in the end, a document could contain all the text and code to create figures and tables, in ***one document***. I have written a crash course on R Markdown, which you can find at [https://francoisbirgand.github.io/tutorial-RMarkdown_instructions.html](https://francoisbirgand.github.io/tutorial-RMarkdown_instructions.html).
+
+There are three components to an R Mardown document (.Rmd):
+
+- YAML header
+- Text
+- Code chunks
+
+After you are done reading [the crash course](https://francoisbirgand.github.io/tutorial-RMarkdown_instructions.html), you will want to be able to find a [reference summary of R markdown here](https://rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf).
+
+- YAML header: The header of the document starts with a YAML which acronym started as “Yet Another Markup Language” and now apparently stands for “YAML Ain’t Markup Language”… The YAML Header specifies how the document will be formatted.
+- Text: most of your writing will be done using plain text, very much like you have been doing with Word, with mark-up alterations. Many details on mark-up are in [the crash course](https://francoisbirgand.github.io/tutorial-RMarkdown_instructions.html). Spell check can be done using
+    - A spell check button to the right of the save button (with “ABC” and a check mark).
+    - Edit > Check Spelling…
+    - The F7 key
+- Code Chunks: This is where you will add the actual R code that will create tables and figures.
+
+</br>
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example a plot of this hydrograph:
+
+```{r pressure, echo=FALSE}
+library(shape)
+hydgph<-read.csv(file = "https://raw.githubusercontent.com/francoisbirgand/discharge_and_flux_calculations/master/hydgph.csv", header = TRUE)
+names(hydgph)=c("date","Q","NO3")
+date=as.POSIXct(hydgph$date, format = "%Y-%m-%d %H:%M:%S");Q=hydgph$Q*1000
+par(mar=c(4.5,4.5,0.5,0.5))
+xlimHG=as.POSIXct(c("1999-01-03 00:00:00","1999-01-08 00:00:00"));ylimHG=c(50,350)
+plot(date,Q,xlab = "date",ylab = "Flow rate (L/s)",type = "l",col="blue",xlim=xlimHG,ylim=ylimHG)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+</br></br>
+You can calculate things and incorporate them directly into your R markdown document. For example, 
+
+```
+You can embed some r code within the text by using Maximum flow = `r '\x60r signif(max(Q),3)\x60'` m&sup3;  to give 3 significant digits to the maximum flow. 
+```
+
+You can embed some r code within the text by using Maximum flow = `r signif(max(Q),3)` m&sup3; to give 3 significant digits to the maximum flow. The code to make &sup3; for m&sup3; is `&sup3;`
+
+</br></br></br></br>
+
