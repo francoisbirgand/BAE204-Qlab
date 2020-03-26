@@ -1,8 +1,8 @@
 ################################
 
-#data<-read.csv(file="https://raw.githubusercontent.com/francoisbirgand/francoisbirgand.github.io/master/data/sample_1hr_QC_data.csv",header = TRUE) #Reads file into table format
-data<-read.csv(file="/Users/francoisbirgand/Google Drive/Echantillonnage/Methods/Data/Cuyahoga/all/2008-2009/Lin_1h_cuyahoga_all_2008-2009_SI_ref.csv",
-                header = TRUE) #Reads file into table format
+data<-read.csv(file="https://raw.githubusercontent.com/francoisbirgand/BAE204-Qlab/master/Lin_1h_cuyahoga_all_2008-2009_SI_ref.csv",header = TRUE) #Reads file into table format
+#data<-read.csv(file="/Users/francoisbirgand/Google Drive/Echantillonnage/Methods/Data/Cuyahoga/all/2008-2009/Lin_1h_cuyahoga_all_2008-2009_SI_ref.csv",
+#                header = TRUE) #Reads file into table format
 
 
 WSarea<-707*1.60934^2 #Area of watershed in km2
@@ -11,7 +11,7 @@ data<-as.data.frame(data)
 data$datetime<-as.POSIXct(strptime(data$datetime, "%Y-%m-%d %H:%M:%S")) # transforms characters into date values understood by R
 D<-data$datetime
 Q<-data$Q   #Defines Q as the flow value (m3/s)
-C<-data$NO3
+C<-data$TP
 
 firstyear<-as.numeric(format(data[1,1],'%Y'))
 lastyear<-as.numeric(format(data[nrow(data),1],'%Y'))
