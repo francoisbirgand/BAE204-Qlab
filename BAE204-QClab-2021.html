@@ -394,7 +394,7 @@ summary {
 <p>In hydrology, we work with time series of flow rates and concentrations, and many of the conclusions we make are based on the calculations of water and nutrient fluxes. The title of this paragraph is time series. Indeed, in hydrology we measure flow not on a continuous basis, but rather at a given frequency. In hydrology, we have been able to make measurements at a high frequency (hourly or smaller), for over 100 years. From this high frequency data, it is possible to obtain a visual representation of the variations of flow.</p>
 <p>The first example below is an example of what we refer to as a simple hydrograph, which follows a rainfall event, with an initial baseflow, a rapidly rising limb, a flow peak, and a more slowly falling limb.</p>
 <p></br></p>
-<pre class="r"><code>hydgph&lt;-read.csv(file = &quot;https://raw.githubusercontent.com/francoisbirgand/discharge_and_flux_calculations/master/hydgph.csv&quot;, header = TRUE)
+<pre class="r"><code>hydgph&lt;-read.csv(file = &quot;hydgph.csv&quot;, header = TRUE)
 names(hydgph)=c(&quot;date&quot;,&quot;Q&quot;,&quot;NO3&quot;)
 date=as.POSIXct(hydgph$date, format = &quot;%Y-%m-%d %H:%M:%S&quot;) # transforms the first column of the file, which are characters into dates that R understands
 Q=hydgph$Q*1000 # Puts in the variable Q the flow rates, which are orginally in m³/s to L/s for better visualization

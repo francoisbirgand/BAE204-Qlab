@@ -36,7 +36,7 @@ The first example below is an example of what we refer to as a simple hydrograph
 </br>
 
 ```{r echo=TRUE, eval=TRUE}
-hydgph<-read.csv(file = "https://raw.githubusercontent.com/francoisbirgand/discharge_and_flux_calculations/master/hydgph.csv", header = TRUE)
+hydgph<-read.csv(file = "hydgph.csv", header = TRUE)
 names(hydgph)=c("date","Q","NO3")
 date=as.POSIXct(hydgph$date, format = "%Y-%m-%d %H:%M:%S") # transforms the first column of the file, which are characters into dates that R understands
 Q=hydgph$Q*1000 # Puts in the variable Q the flow rates, which are orginally in m³/s to L/s for better visualization
