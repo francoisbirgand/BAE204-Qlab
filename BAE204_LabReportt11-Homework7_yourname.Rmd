@@ -1,6 +1,6 @@
 ---
 title: "BAE 204 - Lab11_Homework #7"
-author: "First Lastname"
+author: "François Birgand"
 date: "due 3 April 2020 before midnight"
 output:
   html_document: default
@@ -18,37 +18,30 @@ Below, the hydrograph for the year 2008-2009 for the Cuyahoga River at Independe
 
 ```{r , echo=TRUE, eval=TRUE}
 
-data<-read.csv(file="https://raw.githubusercontent.com/francoisbirgand/BAE204-Qlab/master/Lin_1h_cuyahoga_all_2008-2009_SI_ref.csv",header = TRUE) #Reads file into table format
+data<-read.csv(file="Lin_1h_cuyahoga_all_2008-2009_SI_ref.csv",header = TRUE) #Reads file into table format
 
 WSarea<-707*1.60934^2 #Area of watershed in km2
-WS<-"Cuyahoga River at Independence, OH"
+WS<-"Flow Rate at Cuyahoga River at Independence, OH"
 
-data<-as.data.frame(data)
-data$datetime<-as.POSIXct(strptime(data$datetime, "%Y-%m-%d %H:%M:%S")) # transforms characters into date values understood by R
-D<-data$datetime
-Q<-data$Q   #Defines Q as the flow value (m3/s)
-C<-data$NO3   #Defines C as the concentration value (mg N/L)
-
-N=nrow(data)   #Sets N to the value equal to the number of total rows in the table
-
-head(data) # This shows the first 5 rows of the data data.frame. It shows the names of each of the columns
-names(data) # this shows a list of the names of the columns of data
 
 ```
 
 # Exercise 2
 
-Calculate the lowest, highest, mean, and median flow rates, as well as the 10th percentile, and the 90th percentile. Report them in a bullet list using embedded code.
+Calculating the lowest, highest, mean, median, as well as the 10th and 90th percentile of the flow rates yields:
 
 
-- The mean flow is `r signif(mean(Q),digits=3)` m^3^/s
-- the 10^th^percentile of flow is `r signif(quantile(Q, probs = 0.1),digits=3)` m^3^/s
+- The mean flow was ```#r signif(mean(Q),digits=3)``` m^3^/s
+- the 10^th^percentile of flow was ____ m^3^/s
+- The mean flow rate was ___ m^3^/s.
+- The median flow rate was ___ m^3^/s.
+- The 10^th^ percentile of flow rate was ___  m^3^/s.
+- The 90^th^ percentile of flow rate was ___  m^3^/s.
+
 
 # Exercise 3
 
-Calculate and report the arithmetic average and medium concentrations for nitrate, TP, SRP, and TSS over the entire year of record.
-
-The reference values for agricultural watersheds are, respectively, 5 mg N/L, 0.3 mg P/L, 0.03 mg P/L, and 20 mg TSS/L. Compare your results to these reference values.
+Calculating and comparing the arithmetic average and medium concentrations for nitrate, TP, SRP, and TSS over the entire year of record. As of note, the reference values for agricultural watersheds are, respectively, 5 mg N/L, 0.3 mg P/L, 0.03 mg P/L, and 20 mg TSS/L. Compare your results to these reference values.
 
 
 ```{r , echo=FALSE, eval=TRUE}
@@ -57,7 +50,10 @@ TP<-data$TP
 SRP<-data$SRP
 ```
 
-- The mean concentration for nitrate is `r signif(mean(NO3),digits=3)` mg N/L
+- The mean concentration for nitrate was ___ mg N/L
+- The median concentration for nitrate was ___ mg N/L.
+
+And so on. Compare mean versus median and discuss the difference. And there almost the same, or not. If they were really different, think about what would is say about the occurrence of high values. Compare them to the reference values we have seen in class. Similarly discuss your findings for the other parameters.
 
 # Exercise 4
 
