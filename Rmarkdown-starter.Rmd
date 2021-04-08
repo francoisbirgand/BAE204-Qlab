@@ -2,7 +2,10 @@
 title: "Rmarkdown-starter"
 author: "François Birgand"
 date: "4/01/2021"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -13,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-The beauty of Markdown is to embed R codes, within the text, such that in the end, a document could contain all the text and code to create figures and tables, in ***one document***. I have written a crash course on R Markdown, which you can find at [https://francoisbirgand.github.io/tutorial-RMarkdown_instructions.html](https://francoisbirgand.github.io/tutorial-RMarkdown_instructions.html).
+The beauty of Markdown is to embed R codes, within the text, such that in the end, a document could contain all the text and code to create figures and tables, in ***one document***. I have written a crash course on R Markdown, which you can find at [this link](https://francoisbirgand.github.io/tutorial-RMarkdown_instructions.html).
 
 There are three components to an R Mardown document (.Rmd):
 
@@ -44,7 +47,7 @@ You can also embed plots, for example a plot of this hydrograph:
 
 ```{r pressure, echo=FALSE}
 library(shape)
-hydgph<-read.csv(file = "https://raw.githubusercontent.com/francoisbirgand/discharge_and_flux_calculations/master/hydgph.csv", header = TRUE)
+hydgph<-read.csv(file = "hydgph.csv", header = TRUE)
 names(hydgph)=c("date","Q","NO3")
 date=as.POSIXct(hydgph$date, format = "%Y-%m-%d %H:%M:%S");Q=hydgph$Q*1000
 par(mar=c(4.5,4.5,0.5,0.5))
