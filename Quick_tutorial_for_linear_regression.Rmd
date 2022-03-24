@@ -1,0 +1,177 @@
+---
+title: "Quick tutorial for linear regression"
+author: "François Birgand"
+date: "4/13/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Creating linear regression between y and x
+
+Let us take these two variables x and y and plot them together
+
+```{r }
+x <- c(151, 174, 138, 186, 128, 136, 179, 163, 152, 131)
+y <- c(63, 81, 56, 91, 47, 57, 76, 72, 62, 48)
+
+plot(x,y)
+```
+
+Now, we want to find a linear model ```(lm)``` that best fits through the cloud of points such that in the end we will get a model $y = ax + b$, and we want to find the two coefficients $a$ and $b$.
+
+for this we use the following expression where a variable named ```relation``` has all the attibutes associated with a linear regression of y as a function of x. In this form, it assumes that the intercept is not 0
+
+```{r }
+relation <- lm(y~x) 
+```
+
+
+### How to retrieve some of the values associated with the linear model
+#### When intercept is not 0
+
+```{r }
+names(relation) # 
+
+```
+
+gives quite a few important parameters that are included in the object relation.
+
+
+</br>
+
+
+
+</br>
+
+```{r }
+summary(relation)
+```
+
+gives you a summary of important (same as above + additional) values compiled into a readable table. To obtain some of the values like the R&sup2; or other things.
+
+</br>
+
+</br>
+
+```{r }
+names(summary(relation))
+```
+
+gives you the names of all the variables that appear as a readable table when typing ```summary(relation)```. 
+
+</br>
+
+```{r }
+relation$coefficients # is a vector that gives the coefficients of the regression 
+relation$coefficients[1] # gives the intercept of the regression line or the coefficient b
+relation$coefficients[2] # gives the slope of the regression line or the coefficient a
+```
+
+gives you the names of all the variables that appear as a readable table when typing ```summary(relation)```. 
+
+</br>
+
+You may thus also retrieve the coefficients of the regression using
+
+```{r }
+summary(relation)$coefficients # 
+```
+
+You now have also access to the standard error on the intercept (first row) and on the slope (second row), the t value  gives the results of the t-test associated with testing the significance of the parameter listed in the first column, and Pr(>|t|) gives you the p-value for that t-test.
+
+</br>
+
+```{r}
+# You could thus retrieve the value for the slope using 
+summary(relation)$coefficients[2,1] #second row of the first column 
+
+# You could thus retrieve the value for the intercept using 
+summary(relation)$coefficients[1,1] #first row of the first column 
+```
+
+So essentially ```relation$coefficients[1]``` is the same as ```summary(relation)$coefficients[1,1]``` and
+ ```relation$coefficients[2]``` is the same as ```summary(relation)$coefficients[2,1]```.
+ 
+So may use the values of the coefficients you have found to calculate anything you need with them.
+
+</br>
+
+#### When intercept is 0
+
+You essentially use the same tools but the synthax for the regression becomes:
+
+```{r }
+relation_no_intercept <- lm(y~x+0) 
+relation_no_intercept$coefficients # now only has one value for the slope
+```
+
+</br>
+
+### How to plot the linear model
+
+There are several ways to plot the variables. The first one is to use the function ```abline``` as below. That is very efficient.
+
+```{r }
+x <- c(151, 174, 138, 186, 128, 136, 179, 163, 152, 131)
+y <- c(63, 81, 56, 91, 47, 57, 76, 72, 62, 48)
+
+
+plot(x,y)
+abline(relation,col='red')
+abline(relation_no_intercept,col='green')
+
+```
+
+</br>
+
+You may want to express directly the expression of the coefficients in the equation just like below.
+
+</br>
+
+```{r }
+
+xlim=c(100,200);ylim=c(40,100) # important to define x and y scales now as you are adding a new plot and the automatic scale
+# adjustment may not be the same for both curves
+plot(x,y, xlim=xlim,ylim=ylim)
+
+a <- relation$coefficients[2]
+b <- relation$coefficients[1]
+alpha <- relation_no_intercept$coefficients
+
+par(new=TRUE) # just tells R to wait to plot an additional curve
+
+plot(x,a*x+b, xlim=xlim,ylim=ylim, type='l', col = 'red',ylab='')
+
+par(new=TRUE)
+plot(x,alpha*x, xlim=xlim,ylim=ylim, type='l', col = 'green',ylab='')
+
+```
+
+</br>
+
+But you may also use a totally different ```x``` in the plotting.
+
+</br>
+
+```{r }
+xx <- seq(0,300,by=1) # xx is now a vector from 0 to 300 at increment equal to 1
+
+xlim=c(100,200);ylim=c(40,100) # important to define x and y scales now as you are adding a new plot and the automatic scale
+# adjustment may not be the same for both curves
+plot(x,y, xlim=xlim,ylim=ylim)
+
+a <- relation$coefficients[2]
+b <- relation$coefficients[1]
+alpha <- relation_no_intercept$coefficients
+
+par(new=TRUE) # just tells R to wait to plot an additional curve
+
+plot(xx,a*xx+b, xlim=xlim,ylim=ylim, type='l', col = 'red',ylab='')
+
+par(new=TRUE)
+plot(xx,alpha*xx, xlim=xlim,ylim=ylim, type='l', col = 'green',ylab='')
+
+```
